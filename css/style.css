@@ -1,0 +1,562 @@
+/* =========================
+   폰트 설정
+   font 폴더 안에 아래 파일을 넣어두면 적용됩니다.
+   ========================= */
+@font-face{
+  font-family:"PretendardSemiBold";
+  src:url("../font/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight:600;
+  font-style:normal;
+  font-display:swap;
+}
+
+@font-face{
+  font-family:"DungGeunMo";
+  src:url("../font/DungGeunMo.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+@font-face{
+  font-family:"KCCGanpan";
+  src:url("../font/KCC-Ganpan.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* 
+  style.css
+  화면 디자인을 담당하는 파일입니다.
+  이미지 파일은 image/ 폴더에 넣고, CSS에서는 ../image/파일명.png 형식으로 불러옵니다.
+*/
+
+:root{
+    --bg:#2f3742;
+    --panel:#d7d2c7;
+    --watch:#eeeeea;
+    --text:#ffffff;
+    --dialog:#181b20;
+    --dialog-border:#9b8b69;
+
+    /* 플레이 중 강민재 표시 크기 */
+    --dog-width:126px;
+    --dog-height:103px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    touch-action:manipulation;
+  }
+  #game{
+    width:min(430px,100vw);
+    height:100vh;
+    min-height:760px;
+    padding:0;
+    position:relative;
+    overflow:hidden;
+    background-image:url("../image/background.png");
+    background-size:cover;
+    background-position:center top;
+    background-repeat:no-repeat;
+  }
+  #hud{
+    position:absolute;
+    left:18px;
+    top:25px;
+    min-width:88px;
+    height:34px;
+    padding:0 14px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:"KCCGanpan", system-ui, sans-serif;
+    font-size:18px;
+    letter-spacing:.3px;
+    color:#4f5360;
+    background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(226,232,238,.88));
+    border:2px solid rgba(125,135,149,.85);
+    border-radius:13px;
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,.75),
+      0 3px 0 rgba(87,94,106,.28),
+      inset 0 1px 0 rgba(255,255,255,.85);
+    z-index:5;
+  }
+  #timeText{
+    display:none;
+  }
+  #top{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+  }
+  #barWrap{
+    position:absolute;
+    left:20px;
+    top:80px;
+    width:14px;
+    height:min(482px, calc((100vw - 70px) * 1.338235));
+    border:2px solid #9ba0a8;
+    box-shadow:0 0 0 2px rgba(255,255,255,.98);
+    border-radius:999px;
+    background:rgba(255,255,255,.88);
+    overflow:hidden;
+    z-index:5;
+  }
+  #bar{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#76D46A;
+    border-radius:999px;
+    transition:height .08s linear, background .15s linear;
+  }
+  #board{
+    position:absolute;
+    right:20px;
+    top:80px;
+    width:min(360px, calc(100% - 70px));
+    aspect-ratio:340 / 455;
+    display:block;
+    background-image:url("../image/watch_case.png");
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+    background-position:center;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    z-index:4;
+  }
+  .watch{
+    position:absolute;
+    width:21.176%;      /* 72 / 340 */
+    aspect-ratio:1 / 1;
+    background:transparent;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    user-select:none;
+    cursor:pointer;
+    box-shadow:none;
+    transform-origin:center center;
+    transition:transform .15s ease;
+  }
+  .watch.hit{
+    animation:shake .3s;
+  }
+  @keyframes shake{
+    0%{filter:brightness(1.1)}
+    20%{translate:-4px 0}
+    40%{translate:4px 0}
+    60%{translate:-3px 0}
+    80%{translate:3px 0}
+    100%{translate:0 0;filter:brightness(1)}
+  }
+  #dog{
+    position:absolute;
+    left:36px;
+    top:530px;
+    width:var(--dog-width);
+    height:var(--dog-height);
+    transition:left .38s linear, top .38s linear, transform .38s linear;
+    z-index:20;
+    pointer-events:none;
+  }
+
+  #dog img,
+  #dogSprite{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .controls{
+    display:none;
+  }
+  button{
+    padding:9px 14px;
+    margin:4px;
+    border:0;
+    border-radius:8px;
+    background:#e2d2ad;
+    color:#111;
+    font-weight:700;
+    cursor:pointer;
+  }
+  button:active{transform:translateY(1px)}
+  #overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    z-index:50;
+    padding:24px;
+  }
+  .hidden{display:none!important}
+  .big{
+    font-family:"KCCGanpan", system-ui, sans-serif;
+    font-size:54px;
+    line-height:1.05;
+    font-weight:400;
+    letter-spacing:1px;
+    color:#fff6cf;
+    -webkit-text-stroke:1.5px #4f5360;
+    text-shadow:
+      0 3px 0 #4f5360,
+      0 6px 0 rgba(0,0,0,.22),
+      0 0 14px rgba(255,255,255,.22);
+    padding:8px 18px 14px;
+    white-space:pre-line;
+  }
+  .resultText{
+    margin:18px 0;
+    max-width:360px;
+    line-height:1.6;
+    background:rgba(24,27,32,.92);
+    border:2px solid var(--dialog-border);
+    border-radius:12px;
+    padding:14px;
+  }
+  .sub{
+    font-size:14px;
+    opacity:.8;
+  }
+
+  #coverScreen{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:#2f3742;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    padding:0;
+  }
+  #coverImage{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  #coverFallback{
+    width:min(430px,100vw);
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:24px;
+    background:linear-gradient(180deg,#44505c,#2f3742);
+  }
+  #coverFallback .title{
+    font-size:34px;
+    font-weight:900;
+    margin-bottom:18px;
+  }
+  #coverFallback .tap{
+    font-size:clamp(13px, 3.7vw, 16px);
+    opacity:.85;
+    animation:blink 1.2s infinite;
+  }
+  @keyframes blink{
+    0%,100%{opacity:.35}
+    50%{opacity:1}
+  }
+
+
+
+/* =========================
+   시계 이미지
+   원본 144x144 → 보관장 안에서 비율 표시
+   ========================= */
+.watch img{
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;
+}
+
+/* 첫 대사에서는 시계 보관장을 숨기고, 나레이션부터 보여줍니다. */
+.boardHidden{
+  display:none!important;
+}
+
+/* V5.4 타임바 색상: Green #76D46A / Yellow #F3EF7C / Red #EB877B */
+
+
+/* =========================
+   레벨 / 결과 문구 폰트
+   ========================= */
+.startMessage{
+  color:#fff6cf;
+}
+
+.clearMessage{
+  color:#c7edf6;
+  -webkit-text-stroke:1.5px #4f6578;
+  text-shadow:
+    0 3px 0 #4f6578,
+    0 6px 0 rgba(0,0,0,.22),
+    0 0 14px rgba(255,255,255,.25);
+}
+
+.failMessage{
+  color:#ffd2c7;
+  -webkit-text-stroke:1.5px #744f56;
+  text-shadow:
+    0 3px 0 #744f56,
+    0 6px 0 rgba(0,0,0,.22),
+    0 0 14px rgba(255,255,255,.18);
+}
+
+
+/* =========================
+   V5.6.1 통합 대화창
+   A: chatwindow_a / B,D,E: chatwindow_b / C: chatwindow_c
+   ========================= */
+
+
+/* =========================
+   V5.6.3 발바닥 위치 단독 수정
+   대화창 내부 우하단에 고정합니다.
+   ========================= */
+
+/* =========================
+   V5.8 대화창 고정 무대 시스템
+   핵심: A/B/C/D/E 모두 같은 .dialogStage 안에서 같은 하단 기준으로 배치
+   ========================= */
+
+#dialog{
+  position:absolute;
+  left:20px;
+  right:20px;
+  bottom:110px;
+  z-index:30;
+  cursor:pointer;
+  color:#333;
+  line-height:1.55;
+  white-space:pre-line;
+}
+
+/* 대화창의 기준 무대.
+   이미지 파일 A/B/C가 모두 같은 크기이므로, 이 stage 안에서 위치를 통일합니다. */
+.dialogStage{
+  position:relative;
+  width:100%;
+  aspect-ratio:auto;
+}
+
+/* 대화창 이미지는 stage 하단에 정확히 고정됩니다. */
+.dialogWindowImage{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:auto;
+  display:block;
+  z-index:6;
+}
+
+/* B/C/D/E 기본 대사 영역: 원본 기준 top 30px, 좌우 30px */
+.dialogText{
+  position:absolute;
+  left:3.05%;
+  bottom:12px;
+  right:-4.2%;
+  color:#333;
+  font-family:"DungGeunMo", monospace;
+  font-size:18px;
+  line-height:1.55;
+  white-space:pre-line;
+  letter-spacing:0.3px;
+  transform:scaleX(0.93);
+  transform-origin:left top;
+  z-index:7;
+}
+
+/* A 대사: 원본 기준 top 100px보다 조금 위 */
+.dialogText.speakingText{
+  bottom:43px;
+}
+
+/* C 대사 */
+.dialogText.redText{
+  color:#fff;
+}
+
+#dialogText.dialogText:not(.speakingText){
+  min-height:84px;
+}
+
+/* 발바닥: stage 내부 우하단 고정 */
+.nextFeet,
+#nextFeet{
+  position:absolute;
+  right:4%;
+  bottom:10%;
+  width:24px;
+  height:auto;
+  opacity:0;
+  pointer-events:none;
+  z-index:8;
+}
+
+.nextFeet.show,
+#nextFeet.show{
+  animation:feetBlink .85s infinite;
+}
+
+@keyframes feetBlink{
+  0%,100%{opacity:.25; transform:scale(.96);}
+  50%{opacity:1; transform:scale(1.08);}
+}
+
+/* dog_ha / dog_done: stage 상단 바로 위에 붙임 */
+.dialogDog{
+  position:absolute;
+  right:24px;
+  top:-76px;
+  pointer-events:none;
+  z-index:5;
+}
+
+.dialogDogHa{
+  width:140px;
+}
+
+.dialogDogDone{
+  width:140px;
+}
+
+/* C: 분노 대화창 흔들림. stage 자체를 흔들어도 하단 기준은 같은 stage 안에서 유지됩니다. */
+.dialogAngry{
+  animation:dialogTremble .32s linear 1;
+}
+
+@keyframes dialogTremble{
+  0%{transform:translate(0,0);}
+  15%{transform:translate(-2px,1px);}
+  30%{transform:translate(2px,-1px);}
+  45%{transform:translate(-2px,-1px);}
+  60%{transform:translate(2px,1px);}
+  75%{transform:translate(-1px,0);}
+  100%{transform:translate(0,0);}
+}
+
+/* CLEAR/FAIL 이후 차주한 대사창 */
+.resultText{
+  font-family:"DungGeunMo", monospace;
+}
+
+/* CLEAR/FAIL 이후 말하는 사람 이름 */
+.resultText b{
+  font-family:"PretendardSemiBold", system-ui, sans-serif;
+}
+
+
+/* ===== Result dialog & buttons ===== */
+.resultDialog{
+  width:min(340px, 90vw);
+  margin:18px auto 12px;
+  position:relative;
+  opacity:0;
+}
+
+.resultDialog.show{
+  animation:resultPopIn .28s ease-out forwards;
+}
+
+.resultDialog img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.resultDialog .resultBody{
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:58px;
+  bottom:72px;
+  color:#333;
+  font-family:"DungGeunMo", monospace;
+  font-size:clamp(15px, 4.2vw, 17px);
+  letter-spacing:0.3px;
+  transform:scaleX(0.93);
+  transform-origin:center top;
+  line-height:1.55;
+  white-space:pre-line;
+  text-align:left;
+}
+
+.resultButtons{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:28px;
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  opacity:0;
+  pointer-events:none;
+}
+
+.resultButtons.show{
+  animation:resultButtonIn .25s ease-out forwards;
+  pointer-events:auto;
+}
+
+.resultBtn{
+  min-width:clamp(88px, 27vw, 120px);
+  padding:8px 10px;
+  border:2px solid #9aa3af;
+  border-radius:10px;
+  background:linear-gradient(#eef1f4,#d8dde3);
+  color:#4a5058;
+  font-family:"PretendardSemiBold",system-ui,sans-serif;
+  font-size:clamp(13px, 3.7vw, 16px);
+  cursor:pointer;
+}
+
+.resultBtn:hover{background:linear-gradient(#f7f8fa,#e5e9ee);}
+.resultBtn:active{background:linear-gradient(#cfd5dc,#bcc4cd);}
+
+@keyframes resultPopIn{
+  from{opacity:0; transform:translateY(8px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes resultButtonIn{
+  from{opacity:0; transform:translateY(6px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+
+.nextLevelBtn{
+  margin-top:6px;
+}
+
+
+.clearButtons{
+  bottom:18px;
+}
