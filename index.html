@@ -8,6 +8,7 @@
 </head>
 <body>
 
+<div id="game">
 <div id="coverScreen" aria-label="표지 화면. 아무 곳이나 클릭하면 시작합니다.">
   <!-- 표지 이미지를 넣으려면 HTML 파일과 같은 폴더에 cover.png 라는 이름으로 저장하세요. -->
   <img id="coverImage" src="image/cover.png" alt="게임 표지" onerror="this.style.display='none'; document.getElementById('coverFallback').style.display='flex';">
@@ -16,7 +17,7 @@
     <div class="tap">아무 곳이나 클릭해서 시작</div>
   </div>
 </div>
-<div id="game">
+
   <div id="hud">
     <div id="levelText">Level 1</div>
     <div id="timeText">15.0</div>
