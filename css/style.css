@@ -314,7 +314,10 @@
    레벨 / 결과 문구 폰트
    ========================= */
 .startMessage{
-  color:#fff6cf;
+  color:#f2faf9;
+  font-size:46px;
+  line-height:1.2;
+  letter-spacing:2px;
 }
 
 .clearMessage{
