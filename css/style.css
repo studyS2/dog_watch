@@ -26,6 +26,14 @@
   font-display:swap;
 }
 
+@font-face{
+  font-family:'DNFBitBitv2';
+  font-style:normal;
+  font-weight:400;
+  src:url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf') format('opentype');
+  font-display:swap;
+}
+
 /* 
   style.css
   화면 디자인을 담당하는 파일입니다.
@@ -210,7 +218,7 @@
   }
   .hidden{display:none!important}
   .big{
-    font-family:"KCCGanpan", system-ui, sans-serif;
+    font-family:'DNFBitBitv2', "KCCGanpan", system-ui, sans-serif;
     font-size:54px;
     line-height:1.05;
     font-weight:400;
